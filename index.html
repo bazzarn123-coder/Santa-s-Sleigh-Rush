@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +26,7 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: none;
-            background-color: #050b18;
+            background-color: #f1f5f9; /* Changed background to match white snow */
             width: 100%;
             height: 100%;
             position: fixed;
@@ -326,7 +327,7 @@
             scene.background = new THREE.Color(0x070e1c);
             scene.fog = new THREE.FogExp2(0x070e1c, 0.015);
 
-            // Camera
+            // Camera restored to original position & FOV
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 4.5, -9);
             camera.lookAt(0, 1.5, 5);
@@ -646,23 +647,24 @@
         }
 
         // --- Track & Scenery Generation ---
-        const trackLength = 120;
+        const trackLength = 160;
 
         function buildTrackAndScenery() {
-            const pathGeo = new THREE.PlaneGeometry(16, trackLength * 2);
+            // Extended length and shifted closer towards the camera to completely fill the bottom screen area with snow
+            const pathGeo = new THREE.PlaneGeometry(60, trackLength * 3.5);
             const pathMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.9 });
             const path = new THREE.Mesh(pathGeo, pathMat);
             path.rotation.x = -Math.PI / 2;
-            path.position.set(0, -0.05, trackLength);
+            path.position.set(0, -0.05, -15);
             path.receiveShadow = true;
             scene.add(path);
             trackSegments.push(path);
 
-            for (let z = 10; z < 200; z += 12) {
+            for (let z = 10; z < 220; z += 12) {
                 createSceneryPair(z);
             }
 
-            for (let z = 30; z < 180; z += 22) {
+            for (let z = 30; z < 200; z += 22) {
                 spawnObstacleOrPresentCluster(z);
             }
         }
@@ -670,13 +672,13 @@
         function createSceneryPair(zPos) {
             const isLeftTree = Math.random() > 0.3;
             const leftObj = isLeftTree ? createPineTree() : createCandyCanePost();
-            leftObj.position.set(-10 - Math.random() * 4, 0, zPos + (Math.random() - 0.5) * 6);
+            leftObj.position.set(-16 - Math.random() * 6, 0, zPos + (Math.random() - 0.5) * 6);
             scene.add(leftObj);
             sceneryItems.push(leftObj);
 
             const isRightTree = Math.random() > 0.3;
             const rightObj = isRightTree ? createPineTree() : createCandyCanePost();
-            rightObj.position.set(10 + Math.random() * 4, 0, zPos + (Math.random() - 0.5) * 6);
+            rightObj.position.set(16 + Math.random() * 6, 0, zPos + (Math.random() - 0.5) * 6);
             scene.add(rightObj);
             sceneryItems.push(rightObj);
         }
@@ -1219,3 +1221,4 @@
     </script>
 </body>
 </html>
+Bazzarn
