@@ -15,7 +15,7 @@
     <style>
         :root {
             --sat: env(safe-area-inset-top, 0px);
-            --sab: env(safe-area-inset-bottom, 24px); /* Increased bottom safe area fallback */
+            --sab: env(safe-area-inset-bottom, 48px); /* Further increased bottom safe area offset */
             --sal: env(safe-area-inset-left, 0px);
             --sar: env(safe-area-inset-right, 0px);
         }
@@ -39,7 +39,7 @@
         }
         .safe-padding {
             padding-top: max(1rem, var(--sat));
-            padding-bottom: max(2rem, calc(var(--sab) + 1rem)); /* Increased bottom padding to avoid nav bar */
+            padding-bottom: max(3.5rem, calc(var(--sab) + 1.5rem)); /* Raised bottom padding significantly */
             padding-left: max(1rem, var(--sal));
             padding-right: max(1rem, var(--sar));
         }
@@ -124,7 +124,7 @@
         </div>
 
         <!-- Touch Controls D-Pad & Jump Action -->
-        <div id="mobile-controls" class="hidden flex justify-between items-end w-full max-w-4xl mx-auto pointer-events-auto pb-4 px-3">
+        <div id="mobile-controls" class="hidden flex justify-between items-end w-full max-w-4xl mx-auto pointer-events-auto pb-8 px-4">
             <div class="flex gap-3">
                 <button id="btn-left" class="glass-panel w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl active:bg-white/30 shadow-lg cursor-pointer">⬅️</button>
                 <button id="btn-right" class="glass-panel w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl active:bg-white/30 shadow-lg cursor-pointer">➡️</button>
