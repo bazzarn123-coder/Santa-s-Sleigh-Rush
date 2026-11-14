@@ -240,6 +240,25 @@
                     osc.stop(now + 0.3);
                 } catch(e) {}
             }
+            playHeartRestored() {
+                if (!this.enabled || !this.ctx) return;
+                try {
+                    const now = this.ctx.currentTime;
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+                        gain.gain.setValueAtTime(0.25, now + idx * 0.06);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.25);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now + idx * 0.06);
+                        osc.stop(now + idx * 0.06 + 0.25);
+                    });
+                } catch(e) {}
+            }
             playCrash() {
                 if (!this.enabled || !this.ctx) return;
                 try {
@@ -368,8 +387,10 @@
             highScore = localStorage.getItem('salsa_highscore') || 0;
         } catch(e) {}
 
-        let lives = 3;
+        const MAX_LIVES = 3;
+        let lives = MAX_LIVES;
         let combo = 1;
+        let consecutiveBoxes = 0;
         let gameSpeed = 35;
         let maxSpeed = 75;
         let invulnerableTimer = 0;
@@ -511,7 +532,6 @@
 
                 const spriteGeo = new THREE.PlaneGeometry(2.6, 4.3);
                 santaSpriteMesh = new THREE.Mesh(spriteGeo, spriteMat);
-                // Lowered from 2.15 to 1.15 so the bottom runners rest on the floor
                 santaSpriteMesh.position.set(0, 1.15, 0);
                 santaGroup.add(santaSpriteMesh);
             };
@@ -1289,8 +1309,9 @@
 
         function restartGameVariables() {
             score = 0;
-            lives = 3;
+            lives = MAX_LIVES;
             combo = 1;
+            consecutiveBoxes = 0;
             gameSpeed = 35;
             invulnerableTimer = 0;
             targetLaneX = 0;
@@ -1322,7 +1343,7 @@
 
             let heartsStr = '';
             for (let i = 0; i < lives; i++) heartsStr += '❤️ ';
-            for (let i = lives; i < 3; i++) heartsStr += '🖤 ';
+            for (let i = lives; i < MAX_LIVES; i++) heartsStr += '🖤 ';
             document.getElementById('hearts-container').innerText = heartsStr;
 
             const comboContainer = document.getElementById('combo-container');
@@ -1428,6 +1449,7 @@
                         } else if (invulnerableTimer <= 0) {
                             lives--;
                             combo = 1;
+                            consecutiveBoxes = 0;
                             invulnerableTimer = 1.5;
                             soundManager.playCrash();
                             showBanner('OUCH!', 'text-red-500');
@@ -1461,9 +1483,17 @@
 
                         score += 10 * combo;
                         combo = Math.min(combo + 1, 10);
+                        consecutiveBoxes++;
                         soundManager.playChime();
-                        if (combo % 3 === 0) {
-                            showBanner(`COMBO x${combo}!`, 'text-emerald-400');
+
+                        if (consecutiveBoxes >= 3 && consecutiveBoxes % 3 === 0) {
+                            if (lives < MAX_LIVES) {
+                                lives++;
+                                soundManager.playHeartRestored();
+                                showBanner(`COMBO x${combo}! +1 ❤️`, 'text-rose-400');
+                            } else {
+                                showBanner(`COMBO x${combo}!`, 'text-emerald-400');
+                            }
                         }
                         updateHUD();
                     } else if (pres.position.z < -10) {
