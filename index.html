@@ -511,7 +511,8 @@
 
                 const spriteGeo = new THREE.PlaneGeometry(2.6, 4.3);
                 santaSpriteMesh = new THREE.Mesh(spriteGeo, spriteMat);
-                santaSpriteMesh.position.set(0, 2.15, 0);
+                // Lowered from 2.15 to 1.15 so the bottom runners rest on the floor
+                santaSpriteMesh.position.set(0, 1.15, 0);
                 santaGroup.add(santaSpriteMesh);
             };
 
@@ -1363,7 +1364,7 @@
 
                 // Animate either Sleigh.png sprite bobbing or 3D procedural reindeer
                 if (santaSpriteMesh) {
-                    santaSpriteMesh.position.y = 2.15 + Math.abs(Math.sin(elapsedTime * 15)) * 0.1;
+                    santaSpriteMesh.position.y = 1.15 + Math.abs(Math.sin(elapsedTime * 15)) * 0.08;
                 } else if (reindeerTeam.length > 0) {
                     reindeerTeam.forEach(reindeer => {
                         const phase = elapsedTime * 19 + reindeer.userData.phaseOffset;
